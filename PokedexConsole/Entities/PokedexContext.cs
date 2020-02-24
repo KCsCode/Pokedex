@@ -191,7 +191,7 @@ namespace PokedexConsole.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(ConfigurationManager.ConnectionStrings["PokemonDatabase"].ConnectionString);
+            //optionsBuilder.UseSqlite(ConfigurationManager.ConnectionStrings["PokemonDatabase"].ConnectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

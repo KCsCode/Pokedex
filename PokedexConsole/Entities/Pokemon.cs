@@ -25,8 +25,8 @@ namespace PokedexConsole.Entities
         public long BaseExperience { get; set; }
         public long Order { get; set; }
         public byte[] IsDefault { get; set; }
-
         public virtual PokemonSpecies Species { get; set; }
+
         public virtual ICollection<Encounters> Encounters { get; set; }
         public virtual ICollection<PokemonAbilities> PokemonAbilities { get; set; }
         public virtual ICollection<PokemonForms> PokemonForms { get; set; }

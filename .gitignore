@@ -4,3 +4,7 @@
 
 /PokedexConsole/obj
 /PokedexConsole/.vs/PokedexConsole
+/PokedexAPI/bin/Debug/netcoreapp3.1
+/PokedexAPI/obj/Debug/netcoreapp3.1/staticwebassets
+/PokedexAPI/obj
+/PokedexAPI/appsettings.Development.json
