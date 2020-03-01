@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using PokedexConsole.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using PokedexAPI.DTO;
-using PokedexConsole.DTO;
+using Microsoft.AspNetCore.Mvc;
+using PokedexAPI.Business;
+using PokedexDTOs.RequestDTO;
+using PokedexDTOs.ResponseDTO;
 
 namespace PokedexAPI.Controllers
 {
@@ -16,156 +11,171 @@ namespace PokedexAPI.Controllers
     [ApiController]
     public class TrainerController : ControllerBase
     {
-        private PokedexContext _context;
+        private readonly IPokemonService _pokemonService;
 
-        public TrainerController(PokedexContext context)
+        public TrainerController(IPokemonService pokemonService)
         {
-            _context = context;
+            _pokemonService = pokemonService;
         }
 
         [Authorize("Test")]
+        [Route("v1/get-all-trainers")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TrainerDTO>>> getAll()
+        public IActionResult GetAllTrainers()
         {
-            return await _context.Trainer.AsNoTracking().Select(x => TrainerToDTO(x, _context))
-                
-                .ToListAsync();
-        }
+            IActionResult result = BadRequest();
 
-        [Authorize("Test")]
-        [HttpGet]
-        [Route("v1/get-trainer")]
-        public async Task<ActionResult<IEnumerable<Trainer>>> GetTrainerById([FromQuery]IdRequestDTO request)
-        {
-            ActionResult response = NotFound();
-            Trainer trainer = await _context.Trainer.FirstOrDefaultAsync(x => x.Id == request.Id);
-            if (trainer != null)
+            IEnumerable<TrainerResponseDTO> response = _pokemonService.GetAllTrainers();
+            if (response != null)
             {
-                response = Ok(trainer);
-            }
-            return response;
-        }
-
-        [Authorize("Test")]
-        [Route("register")]
-        [HttpPost]
-        public async Task<ActionResult<IEnumerable<Trainer>>> registerPokemonToTrainer(TrainerPokemonRequestDTO request)
-        {
-            ActionResult response;
-
-            int pokemonCount = _context.TrainerPokemonMap.Where(x => x.TrainerId == request.TrainerId).Count();
-            if (pokemonCount >= 6)
-            {
-                response = BadRequest("Trainer has too many pokemon. Remove Pokemon before registering additional pokemon");
+                result = Ok(response);
             }
             else
             {
-                TrainerPokemonMap trainerPokemon = new TrainerPokemonMap
-                {
-                    TrainerId = request.TrainerId,
-                    PokemonId = request.PokemonId
-                };
-                _context.TrainerPokemonMap.Add(trainerPokemon);
-                await _context.SaveChangesAsync();
-                response = Ok();
+                result = NotFound();
             }
 
-            return response;
+            return result;
         }
 
         [Authorize("Test")]
-        [Route("unregister")]
-        [HttpPost]
-        public async Task<ActionResult<IEnumerable<Trainer>>> unregisterPokemonToTrainer(TrainerPokemonRequestDTO request)
+        [Route("v1/get-trainer")]
+        [HttpGet]
+        public IActionResult GetTrainerById([FromQuery]RequestByIdDTO request)
         {
-            ActionResult response = BadRequest();
-            var pokemon = _context.TrainerPokemonMap
-                .FirstOrDefault(x => request.TrainerId == x.TrainerId && request.PokemonId == x.PokemonId);
+            IActionResult result = BadRequest();
 
-            if (pokemon != null)
+            if (request != null)
             {
+                TrainerResponseDTO response = _pokemonService.GetTrainerById(request);
+
+                if (response != null)
                 {
-                    _context.Remove(pokemon);
-                    await _context.SaveChangesAsync();
-                    response = Ok();
+                    result = Ok(response);
                 }
             }
-            return response;
+
+            return result;
         }
 
-
         [Authorize("Test")]
+        [Route("v1/register")]
         [HttpPost]
-        public async Task<ActionResult> CreateTrainer(TrainerRequestDTO request)
+        public IActionResult RegisterPokemonToTrainer(TrainerPokemonRequestDTO request)
         {
-            Trainer newTrainer = new Trainer
+            IActionResult result = BadRequest();
+            if (request != null)
             {
-                TrainerName = request.Name,
-                Email = request.Email,
-                ContactNumber = request.ContactNumber
-            };
-            _context.Trainer.Add(newTrainer);
-            await _context.SaveChangesAsync();
-            return Ok(); 
+                string response = _pokemonService.RegisterPokemonToTrainer(request);
 
+                if (response == null)
+                {
+                    result = Ok();
+                }
+                else
+                {
+                    result = BadRequest(response);
+                }
+            }
+            
+            return result;
         }
 
         [Authorize("Test")]
+        [Route("v1/unregister")]
+        [HttpPost]
+        public IActionResult UnregisterPokemonToTrainer(TrainerPokemonRequestDTO request)
+        {
+            IActionResult result = BadRequest();
+
+            if (request != null)
+            {
+                string response = _pokemonService.UnregisterPokemonToTrainer(request);
+
+                if (response == null)
+                {
+                    result = Ok();
+                }
+                else
+                {
+                    result = BadRequest(response);
+                }
+            }
+              
+            return result;
+        }
+
+        [Authorize("Test")]
+        [Route("v1/create-trainer")]
+        [HttpPost]
+        public IActionResult CreateTrainer(TrainerRequestDTO request)
+        {
+            IActionResult result = BadRequest();
+
+            if (request != null)
+            {
+                string response = _pokemonService.CreateTrainer(request);
+
+                if (response == null)
+                {
+                    result = Ok();
+                }
+                else
+                {
+                    result = BadRequest(response);
+                }
+            }
+            
+            return result; 
+        }
+
+        [Authorize("Test")]
+        [Route("v1/update-trainer")]
         [HttpPut]
-        public async Task<ActionResult> UpdateTrainer(TrainerRequestDTO request)
+        public IActionResult UpdateTrainer(TrainerRequestDTO request)
         {
-            ActionResult response = NotFound();
-            Trainer trainer = await _context.Trainer.FirstOrDefaultAsync(x => x.Id == request.Id);
-            if (trainer != null)
-            {
-                trainer.TrainerName = request.Name;
-                trainer.Email = request.Email;
-                trainer.ContactNumber = request.ContactNumber;
+            IActionResult result = BadRequest();
 
-                try
+            if (request != null)
+            {
+                string response = _pokemonService.UpdateTrainer(request);
+                
+                if (response == null)
                 {
-                    await _context.SaveChangesAsync();
-                    response = Ok();
+                    result = Ok();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    response = BadRequest();
+                    result = BadRequest(response);
                 }
             }
 
-            return response;
+            return result;
         }
 
         [Authorize("Test")]
+        [Route("v1/delete-trainer")]
         [HttpDelete]
-        public async Task<ActionResult> RemoveTrainer([FromQuery]IdRequestDTO request)
+        public IActionResult RemoveTrainer(RequestByIdDTO request)
         {
-            ActionResult response = NotFound();
-            Trainer trainer = await _context.Trainer.FirstOrDefaultAsync(x => x.Id == request.Id);
-            if (trainer != null)
+            IActionResult result = BadRequest();
+
+            if (request != null)
             {
-                _context.Remove(trainer);
-                await _context.SaveChangesAsync();
-                response = Ok();
+                string response = _pokemonService.RemoveTrainer(request);
+
+                if (response == null)
+                {
+                    result = Ok();
+                }
+                else
+                {
+                    result = BadRequest(response);
+                }
+
             }
 
-            return response;
-        }
-
-        private static TrainerDTO TrainerToDTO(Trainer trainer, PokedexContext context)
-        {
-            var pokemon = context.TrainerPokemonMap.AsNoTracking()
-                .Where(x=> x.TrainerId == trainer.Id)
-                .Join(context.Pokemon, map => map.PokemonId, p => p.Id, (map,p) => p).Include(x => x.PokemonTypes)
-                .Select(x=> PokemonController.PokemonToDTO(x, context)).ToList();
-
-            return new TrainerDTO
-            {
-                Name = trainer.TrainerName,
-                Email = trainer.Email,
-                ContactNumber = trainer.ContactNumber,
-                PokemonRoster = pokemon
-            };
+            return result;
         }
     }
 }

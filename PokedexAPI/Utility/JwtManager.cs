@@ -1,19 +1,31 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using PokedexAPI.Model;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
-namespace PokedexAPI.Controllers
+namespace PokedexAPI.Utility
 {
     public class JwtManager
     {
         private const string SECRET = "this_is_a_secret_123";
-        public static string GenerateJSONToken(string username, int timeOutInMinutes = 15)
+        private const string ISSUER = "test";
+        private const string AUDIENCE = "test";
+
+        public string Secret
+        {
+            get { return SECRET; }
+        }
+        public string Issuser
+        {
+            get { return ISSUER; }
+        }
+        public string Audience
+        {
+            get { return AUDIENCE; }
+        }
+
+        public string GenerateJSONToken(string username, int timeOutInMinutes = 15)
         {
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SECRET));
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -23,8 +35,8 @@ namespace PokedexAPI.Controllers
             };
 
             var token = new JwtSecurityToken(
-                issuer: "test",
-                audience: "test",
+                issuer: ISSUER,
+                audience: AUDIENCE,
                 claims,
                 expires: DateTime.Now.AddMinutes(timeOutInMinutes),
                 signingCredentials: credentials);

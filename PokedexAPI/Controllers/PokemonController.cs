@@ -1,84 +1,64 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using PokedexConsole.Entities;
-using PokedexConsole.DTO;
-using PokedexAPI.DTO;
-using System;
+using PokedexAPI.Business;
+using PokedexDTOs.RequestDTO;
+using PokedexDTOs.ResponseDTO;
 
 namespace PokedexAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PokemonController : ControllerBase
     {
-        private readonly PokedexContext _context;
+        private readonly IPokemonService _pokemonService;
 
-        public PokemonController(PokedexContext context)
+        public PokemonController(IPokemonService pokemonService)
         {
-            _context = context;
+            _pokemonService = pokemonService ?? throw new ArgumentNullException(nameof(pokemonService));
         }
 
+        [Route("v1/get-pokemon")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PokemonDTO>>> GetPokemonById([FromQuery]IdRequestDTO request)
+        public IActionResult GetPokemonById([FromQuery]RequestByIdDTO request)
         {
-            
-            Pokemon pokemon = await _context.Pokemon.AsNoTracking()
-                .Include(x => x.PokemonTypes).FirstOrDefaultAsync(x => x.Id == request.Id);
+            IActionResult result = BadRequest();
 
-            if (pokemon == null)
+            if (request != null)
             {
-                return NotFound();
-            }
-
-            return Ok(PokemonToDTO(pokemon, _context));
-        }
-
-        [Route("type")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PokemonDTO>>> GetPokemonByTypeId([FromQuery]IdRequestDTO request)
-        {
-            var typeId = await _context.Types.AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.Id);
-            if (typeId == null)
-            {
-                return NotFound();
-            }
-            return await _context.Pokemon.AsNoTracking()
-                .Include(x => x.PokemonTypes)
-                .Where(x => x.PokemonTypes.Any(y => y.TypeId == request.Id))
-                .Select(x => PokemonToDTO(x, _context)).ToListAsync();
-        }
-        //[HttpGet]
-        //[HttpGet("entity")]
-        //public async Task<ActionResult<IEnumerable<Pokemon>>> GetPokemonEntity()
-        //{
-        //    return await _context.Pokemon.Include(t => t.PokemonTypes).Take(5).ToListAsync();
-        //}
-
-        public static PokemonDTO PokemonToDTO(Pokemon pokemon, PokedexContext context)
-        {
-            List<TypeDTO> types = new List<TypeDTO>();
-
-            foreach (PokemonTypes type in pokemon.PokemonTypes ?? Enumerable.Empty<PokemonTypes>())
-            {
-                types.Add(new TypeDTO()
+                PokemonResponseDTO response = _pokemonService.GetPokemonById(request);
+                if (response != null)
                 {
-                    Name = context.Types.AsNoTracking().FirstOrDefault(x => x.Id == type.TypeId)?.Identifier,
-                    Id = type.TypeId 
-                });
+                    result = Ok(response);
+                }
+                else
+                {
+                    result = NotFound();
+                }
             }
 
-            return new PokemonDTO
+            return result;
+        }
+
+        [Route("v1/type")]
+        [HttpGet]
+        public IActionResult GetPokemonByTypeId([FromQuery]RequestByIdDTO request)
+        {
+            IActionResult result = BadRequest();
+            if (request != null)
             {
-                PokemonName = pokemon.Identifier,
-                PokedexId = pokemon.SpeciesId,
-                Height = pokemon.Height,
-                Weight = pokemon.Weight,
-                BaseExperience = pokemon.BaseExperience,
-                Types = types
-            };
+                IEnumerable<PokemonResponseDTO> response = _pokemonService.GetPokemonByTypeId(request);
+                if (response != null)
+                {
+                    result = Ok(response);
+                }
+                else
+                {
+                    result = NotFound();
+                }
+            }
+            
+            return result;
         }
     }
 }

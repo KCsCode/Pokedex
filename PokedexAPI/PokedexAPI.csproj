@@ -22,7 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PokedexConsole\PokedexConsole.csproj" />
+    <ProjectReference Include="..\PokedexBusiness\PokedexDTOs.csproj" />
+    <ProjectReference Include="..\PokedexConsole\PokedexPersistance.csproj" />
   </ItemGroup>
 
 

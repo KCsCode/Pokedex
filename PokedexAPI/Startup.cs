@@ -1,15 +1,16 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using PokedexConsole.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using PokedexAPI.Controllers;
+using PokedexAPI.Business;
+using PokedexAPI.Utility;
+using PokedexPersistance.Entities;
 
 namespace PokedexAPI
 {
@@ -25,9 +26,13 @@ namespace PokedexAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PokedexContext>(opt =>
-            opt.UseSqlite("Data Source=C:\\Pokedex\\PokedexConsole\\Resources\\pokedex.sqlite"));
             services.AddControllers();
+
+            JwtManager jWTManager = new JwtManager();
+            services.AddDbContext<PokedexContext>(opt => opt.UseSqlite(Configuration.GetConnectionString("Pokedex")));
+            services.AddScoped<IPokemonService, PokemonService>();
+            services.AddSingleton(jWTManager);
+            services.AddSingleton(new PasswordManager());
 
             services.AddAuthorization(auth =>
             {
@@ -45,12 +50,12 @@ namespace PokedexAPI
                         ValidateLifetime = true,
                         RequireAudience = true,
                         ValidateAudience = true,
-                        ValidAudience = "test",
+                        ValidAudience = jWTManager.Audience,
                         ValidateIssuer = true,
-                        ValidIssuer = "test",
+                        ValidIssuer = jWTManager.Issuser,
                         RequireSignedTokens = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("this_is_a_secret_123"))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jWTManager.Secret))
                     };
                 });
 

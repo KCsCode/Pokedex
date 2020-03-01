@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PokedexConsole.Entities
+namespace PokedexPersistance.Entities
 {
     public partial class ConquestMoveEffectProse
     {

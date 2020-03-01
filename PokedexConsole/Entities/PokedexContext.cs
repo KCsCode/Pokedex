@@ -2,14 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace PokedexConsole.Entities
+namespace PokedexPersistance.Entities
 {
     public partial class PokedexContext : DbContext
     {
-        public PokedexContext()
-        {
-        }
-
         public PokedexContext(DbContextOptions<PokedexContext> options)
             : base(options)
         {
@@ -190,15 +186,6 @@ namespace PokedexConsole.Entities
         public virtual DbSet<VersionGroups> VersionGroups { get; set; }
         public virtual DbSet<VersionNames> VersionNames { get; set; }
         public virtual DbSet<Versions> Versions { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlite("Data Source=C:\\Pokedex\\PokedexConsole\\Resources\\pokedex.sqlite");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
