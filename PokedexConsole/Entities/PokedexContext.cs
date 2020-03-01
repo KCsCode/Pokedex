@@ -1,5 +1,6 @@
-﻿using System.Configuration;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace PokedexConsole.Entities
 {
@@ -14,7 +15,6 @@ namespace PokedexConsole.Entities
         {
         }
 
-        #region DbSet
         public virtual DbSet<Abilities> Abilities { get; set; }
         public virtual DbSet<AbilityChangelog> AbilityChangelog { get; set; }
         public virtual DbSet<AbilityChangelogProse> AbilityChangelogProse { get; set; }
@@ -178,20 +178,26 @@ namespace PokedexConsole.Entities
         public virtual DbSet<SuperContestCombos> SuperContestCombos { get; set; }
         public virtual DbSet<SuperContestEffectProse> SuperContestEffectProse { get; set; }
         public virtual DbSet<SuperContestEffects> SuperContestEffects { get; set; }
+        public virtual DbSet<Trainer> Trainer { get; set; }
+        public virtual DbSet<TrainerPokemonMap> TrainerPokemonMap { get; set; }
         public virtual DbSet<TypeEfficacy> TypeEfficacy { get; set; }
         public virtual DbSet<TypeGameIndices> TypeGameIndices { get; set; }
         public virtual DbSet<TypeNames> TypeNames { get; set; }
         public virtual DbSet<Types> Types { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<VersionGroupPokemonMoveMethods> VersionGroupPokemonMoveMethods { get; set; }
         public virtual DbSet<VersionGroupRegions> VersionGroupRegions { get; set; }
         public virtual DbSet<VersionGroups> VersionGroups { get; set; }
         public virtual DbSet<VersionNames> VersionNames { get; set; }
         public virtual DbSet<Versions> Versions { get; set; }
-        #endregion DbSet
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseSqlite(ConfigurationManager.ConnectionStrings["PokemonDatabase"].ConnectionString);
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlite("Data Source=C:\\Pokedex\\PokedexConsole\\Resources\\pokedex.sqlite");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -4545,6 +4551,50 @@ namespace PokedexConsole.Entities
                     .HasColumnType("SMALLINT");
             });
 
+            modelBuilder.Entity<Trainer>(entity =>
+            {
+                entity.ToTable("trainer");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ContactNumber)
+                    .HasColumnName("contact_number")
+                    .HasColumnType("nvarchar(10)");
+
+                entity.Property(e => e.Email)
+                    .HasColumnName("email")
+                    .HasColumnType("nvarchar(255)");
+
+                entity.Property(e => e.TrainerName)
+                    .IsRequired()
+                    .HasColumnName("trainer_name")
+                    .HasColumnType("nvarchar(255)");
+            });
+
+            modelBuilder.Entity<TrainerPokemonMap>(entity =>
+            {
+                entity.ToTable("trainer_pokemon_map");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.PokemonId)
+                    .HasColumnName("pokemon_id")
+                    .HasColumnType("int");
+
+                entity.Property(e => e.TrainerId)
+                    .HasColumnName("trainer_id")
+                    .HasColumnType("int");
+
+                entity.HasOne(d => d.Pokemon)
+                    .WithMany(p => p.TrainerPokemonMap)
+                    .HasForeignKey(d => d.PokemonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<TypeEfficacy>(entity =>
             {
                 entity.HasKey(e => new { e.DamageTypeId, e.TargetTypeId });
@@ -4645,6 +4695,28 @@ namespace PokedexConsole.Entities
                     .WithMany(p => p.Types)
                     .HasForeignKey(d => d.GenerationId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Users>(entity =>
+            {
+                entity.ToTable("users");
+
+                entity.HasIndex(e => e.UserName)
+                    .HasName("users_ix");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasColumnName("password")
+                    .HasColumnType("nvarchar(255)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("user_name")
+                    .HasColumnType("nvarchar(255)");
             });
 
             modelBuilder.Entity<VersionGroupPokemonMoveMethods>(entity =>

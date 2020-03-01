@@ -18,15 +18,15 @@ namespace PokedexAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TypesDTO>>> GetTypes()
+        public async Task<ActionResult<IEnumerable<TypeDTO>>> GetTypes()
         {
             return await _context.Types.Select(x => TypesToDTO(x)).ToListAsync();
         }
-        private static TypesDTO TypesToDTO(Types type) =>
-            new TypesDTO
+        private static TypeDTO TypesToDTO(Types type) =>
+            new TypeDTO
             {
                 Id = type.Id,
-                Identifier = type.Identifier
+                Name = type.Identifier
             };
     }
 }

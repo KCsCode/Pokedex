@@ -15,6 +15,7 @@ namespace PokedexConsole.Entities
             PokemonMoves = new HashSet<PokemonMoves>();
             PokemonStats = new HashSet<PokemonStats>();
             PokemonTypes = new HashSet<PokemonTypes>();
+            TrainerPokemonMap = new HashSet<TrainerPokemonMap>();
         }
 
         public long Id { get; set; }
@@ -25,8 +26,8 @@ namespace PokedexConsole.Entities
         public long BaseExperience { get; set; }
         public long Order { get; set; }
         public byte[] IsDefault { get; set; }
-        public virtual PokemonSpecies Species { get; set; }
 
+        public virtual PokemonSpecies Species { get; set; }
         public virtual ICollection<Encounters> Encounters { get; set; }
         public virtual ICollection<PokemonAbilities> PokemonAbilities { get; set; }
         public virtual ICollection<PokemonForms> PokemonForms { get; set; }
@@ -35,5 +36,6 @@ namespace PokedexConsole.Entities
         public virtual ICollection<PokemonMoves> PokemonMoves { get; set; }
         public virtual ICollection<PokemonStats> PokemonStats { get; set; }
         public virtual ICollection<PokemonTypes> PokemonTypes { get; set; }
+        public virtual ICollection<TrainerPokemonMap> TrainerPokemonMap { get; set; }
     }
 }
