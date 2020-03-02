@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using PokedexAPI.Business;
 using PokedexDTOs.ResponseDTO;
@@ -11,9 +12,12 @@ namespace PokedexAPI.Controllers
     {
         private readonly IPokemonService _pokemonService;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="TypeController"/> class.
+        /// </summary>
         public TypeController(IPokemonService pokemonService)
         {
-            _pokemonService = pokemonService;
+            _pokemonService = pokemonService ?? throw new ArgumentNullException(nameof(pokemonService));
         }
 
         [Route("v1/get-types")]

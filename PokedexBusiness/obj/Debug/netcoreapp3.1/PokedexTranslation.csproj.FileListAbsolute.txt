@@ -1,8 +1,0 @@
-C:\Pokedex\PokedexBusiness\bin\Debug\netcoreapp3.1\PokedexTranslation.deps.json
-C:\Pokedex\PokedexBusiness\bin\Debug\netcoreapp3.1\PokedexTranslation.dll
-C:\Pokedex\PokedexBusiness\bin\Debug\netcoreapp3.1\PokedexTranslation.pdb
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexTranslation.csprojAssemblyReference.cache
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexTranslation.AssemblyInfoInputs.cache
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexTranslation.AssemblyInfo.cs
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexTranslation.dll
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexTranslation.pdb

@@ -1,8 +1,0 @@
-C:\Pokedex\PokedexBusiness\bin\Debug\netcoreapp3.1\PokedexDTOs.deps.json
-C:\Pokedex\PokedexBusiness\bin\Debug\netcoreapp3.1\PokedexDTOs.dll
-C:\Pokedex\PokedexBusiness\bin\Debug\netcoreapp3.1\PokedexDTOs.pdb
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexDTOs.csprojAssemblyReference.cache
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexDTOs.AssemblyInfoInputs.cache
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexDTOs.AssemblyInfo.cs
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexDTOs.dll
-C:\Pokedex\PokedexBusiness\obj\Debug\netcoreapp3.1\PokedexDTOs.pdb

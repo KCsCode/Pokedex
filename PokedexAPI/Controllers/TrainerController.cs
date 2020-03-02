@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokedexAPI.Business;
@@ -13,9 +14,12 @@ namespace PokedexAPI.Controllers
     {
         private readonly IPokemonService _pokemonService;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="TrainerController"/> class.
+        /// </summary>
         public TrainerController(IPokemonService pokemonService)
         {
-            _pokemonService = pokemonService;
+            _pokemonService = pokemonService ?? throw new ArgumentNullException(nameof(pokemonService));
         }
 
         [Authorize("Test")]

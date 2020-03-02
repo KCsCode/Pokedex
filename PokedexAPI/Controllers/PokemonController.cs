@@ -13,6 +13,9 @@ namespace PokedexAPI.Controllers
     {
         private readonly IPokemonService _pokemonService;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="PokemonController"/> class.
+        /// </summary>
         public PokemonController(IPokemonService pokemonService)
         {
             _pokemonService = pokemonService ?? throw new ArgumentNullException(nameof(pokemonService));

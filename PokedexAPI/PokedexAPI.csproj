@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PokedexBusiness\PokedexDTOs.csproj" />
     <ProjectReference Include="..\PokedexConsole\PokedexPersistance.csproj" />
+    <ProjectReference Include="..\PokedexPersistance\PokedexPersistance.csproj" />
   </ItemGroup>
 
 

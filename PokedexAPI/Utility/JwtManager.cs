@@ -25,6 +25,9 @@ namespace PokedexAPI.Utility
             get { return AUDIENCE; }
         }
 
+        /// <summary>
+        /// Generates JSON Web Token allowing user to make authenticated calls.
+        /// </summary>
         public string GenerateJSONToken(string username, int timeOutInMinutes = 15)
         {
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SECRET));
