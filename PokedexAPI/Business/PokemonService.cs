@@ -109,9 +109,12 @@ namespace PokedexAPI.Business
         {
             string error = null;
             Trainer trainer = null;
-            trainer =_context.Trainer.AsNoTracking().FirstOrDefault(x => x.Id == request.TrainerId);
+            Pokemon pokemon = null;
 
-            if (trainer != null)
+            trainer =_context.Trainer.AsNoTracking().FirstOrDefault(x => x.Id == request.TrainerId);
+            pokemon = _context.Pokemon.AsNoTracking().FirstOrDefault(x => x.Id == request.PokemonId);
+
+            if (trainer != null && pokemon != null)
             {
                 int pokemonRegisteredCount = _context.TrainerPokemonMap.AsNoTracking().Where(x => x.TrainerId == request.TrainerId).Count();
                 if (pokemonRegisteredCount < 6)
@@ -134,7 +137,7 @@ namespace PokedexAPI.Business
             }
             else 
             {
-                error = "TrainerId does not exist.";
+                error = "TrainerId or PokemonId does not exist.";
             }
             
 
@@ -157,7 +160,7 @@ namespace PokedexAPI.Business
 
                     if (registeredPokemon != null)
                     {
-                        _context.Remove(pokemon);
+                        _context.Remove(registeredPokemon);
                         if(_context.SaveChanges() != 1)
                         {
                             error = "Error saving changes.";
